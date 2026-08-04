@@ -152,6 +152,19 @@
     .click-hint { animation: none; }
   }
 
+  @keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(32, 40, 127, 0.3)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(251, 201, 72, 0.9)); }
+}
+
+.file-icon.unclicked .icon-inner {
+  animation: float 3s ease-in-out infinite, glow-pulse 1.8s ease-in-out infinite;
+}
+
+.file-icon:hover .icon-inner {
+  transform: scale(1.15) !important;
+}
+
   .overlay {
     position: fixed;
     inset: 0;
@@ -387,7 +400,7 @@
   </div> 
 
 /* LinksPage wrapper */
-<div style="position: absolute; right: 3%; bottom: 20%; width: 15%; z-index: 4;">
+<div style="position: absolute; right: 3%; bottom: 28%; width: 15%; z-index: 4;">
       <img src="assets/LinksPage.png" alt="Links"
         style="width: 100%; display: block; transform: rotate(90deg); user-select: none;">
   </div>
@@ -576,7 +589,59 @@ const dayStr = String(today.getDate()).padStart(2, '0');
 
 document.getElementById('cal-month').textContent = monthAbbr[today.getMonth()];
 document.getElementById('cal-day-tens').textContent = dayStr[0];
-document.getElementById('cal-day-ones').textContent = dayStr[1];  </script>
+document.getElementById('cal-day-ones').textContent = dayStr[1];  
+
+function openModal(modalId) {
+  const overlay = document.querySelector(`.overlay[data-modal-id="${modalId}"]`);
+  if (overlay) overlay.classList.add('open');
+}
+
+function closeModal(overlay) {
+  overlay.classList.remove('open');
+}
+
+const CLICKED_KEY = 'portfolio-clicked-icons';
+const clickedIds = new Set(JSON.parse(localStorage.getItem(CLICKED_KEY) || '[]'));
+
+document.querySelectorAll('.file-icon img[data-modal]').forEach((img) => {
+  const iconWrap = img.closest('.file-icon');
+  const modalId = img.dataset.modal;
+
+  iconWrap.setAttribute('tabindex', '0');
+  iconWrap.setAttribute('role', 'button');
+
+  // glow until this specific icon has been clicked before
+  if (!clickedIds.has(modalId)) {
+    iconWrap.classList.add('unclicked');
+  }
+
+  function markClicked() {
+    iconWrap.classList.remove('unclicked');
+    clickedIds.add(modalId);
+    localStorage.setItem(CLICKED_KEY, JSON.stringify([...clickedIds]));
+    openModal(modalId);
+  }
+
+  iconWrap.addEventListener('click', markClicked);
+  iconWrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') markClicked();
+  });
+});
+
+document.querySelectorAll('.overlay').forEach((overlay) => {
+  overlay.querySelector('.modal-close').addEventListener('click', () => closeModal(overlay));
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal(overlay);
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.overlay.open').forEach(closeModal);
+  }
+});
+
+</script>
 
 </body>
 </html>
