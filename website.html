@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Portfolio Hero — Desk Scene</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    overscroll-behavior: none;
+
+  }
+.viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;      /* clips whatever spills past the edges */
+  background: #000;
+}
+
+.calendar {
+  position: absolute;
+  left: 5%;
+  bottom: 28%;      /* was: top: 70% — now anchored to the desk like the lamp */
+  width: min(25vw, 450px);
+  aspect-ratio: 600 / 400;
+  
+  z-index: 5;
+}
+
+.block {
+  position: relative;
+  flex: 1;
+}
+
+.block img {
+  width: 100%;
+  display: block;
+}
+
+.block span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Times New Roman', serif;
+  font-weight: bold;
+  font-size: 1.4vw;
+  color: #3a2a1a; /* dark "painted" brown/black */
+}
+
+.scene {
+  position: relative;      /* was: absolute */
+  margin: 0 auto;           /* was: top/left/transform centering */
+  width: max(100vw, calc(100vh * 2388 / 1668));
+  height: max(100vh, calc(100vw * 1668 / 2388));
+  background-image: url('assets/room.png');
+  background-size: cover;
+  background-position: center;
+}
+  .scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(0,0,0,0.08) 100%);
+  }
+
+  .lamp {
+    position: absolute;
+    bottom: 28%;
+    left: 25%;
+    width: min(25vw, 450px);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .laptop-wrap {
+    position: absolute;
+    bottom: 13%;
+    left: 47%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: min(40vw, 600px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 25px 25px rgba(0,0,0,0.25));
+    z-index: 3;
+  }
+
+  .laptop-wrap img {
+    width: 100%;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .file-icon {
+    position: absolute;
+    cursor: pointer;
+    z-index: 4;
+  }
+
+  .file-icon .icon-inner {
+    animation: float 3s ease-in-out infinite;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .file-icon:hover .icon-inner {
+    transform: scale(1.15) !important;
+  }
+
+  .file-icon img {
+    width: 100%;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* .file-icon { outline: 1px dashed red; } */
+
+  .click-hint {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    color: #5a6a5a;
+    opacity: 0.7;
+    z-index: 2;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { translate: 0 0; }
+    50%      { translate: 0 -5px; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 0.85; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .file-icon .icon-inner { animation: none; }
+    .click-hint { animation: none; }
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 30, 20, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .overlay.open {
+    display: flex;
+  }
+
+  .modal {
+    position: relative;
+    width: min(650px, 90vw);
+    height: min(800px, 88vh);
+    background: #F5F1E8;
+    border-radius: 1.25rem;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+    padding: 2.5rem;
+    overflow-y: auto;
+    animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pop-in {
+    from { transform: scale(0.9); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: none;
+    background: #232946;
+    color: #F5F1E8;
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    background: #FF6F59;
+  }
+</style>
+</head>
+<body>
+  <div class="viewport">
+
+  <div class="scene">
+
+    <div class="file-icon" style="left: 35%; top: 20%; width: 10%;">
+      <div class="icon-inner">
+        <img src="assets/SWE.png" alt="SWE" data-modal="swe-modal">
+      </div>
+    </div>
+
+    <div class="file-icon" style="right:21%; bottom: 8%; width: 18%;">
+      <div class="icon-inner" style="transform: rotate(14deg);">
+        <img src="assets/resume.png" alt="resume" data-modal="resume-modal">
+      </div>
+    </div>
+
+    <div class="file-icon" style="left: 48%; top: 22%; width: 10%;">
+      <div class="icon-inner">
+        <img src="assets/Hackathons.png" alt="Hackathons" data-modal="hackathons-modal">
+      </div>
+    </div>
+
+    <div class="file-icon" style="left: 61%; top: 23%; width: 10%;">
+      <div class="icon-inner">
+        <img src="assets/Courses.png" alt="Courses" data-modal="courses-modal">
+      </div>
+    </div>
+
+    <div class="overlay" data-modal-id="project1-modal">
+      <div class="modal">
+        <button class="modal-close">✕</button>
+
+        <h2 style="margin: 0 0 0.4rem; color: #232946; font-size: 1.75rem;">Nine Levels Down</h2>
+        <p style="margin: 0 0 1.25rem; opacity: 0.55; font-size: 0.85rem;">GMTK Game Jam 2026</p>
+
+        <p style="margin: 0 0 1rem; opacity: 0.85; line-height: 1.6;">
+          A WarioWare-style first-person shooter built for the 2026 itch.io Game Jam.
+        </p>
+
+        <div style="margin: 0 0 1.5rem; padding: 1rem 1.1rem; background: #EFEBDF; border-radius: 0.75rem;">
+          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.6;">
+            My contributions
+          </p>
+          <ul style="margin: 0; padding-left: 1.1rem; opacity: 0.85; line-height: 1.6;">
+            <li>Built the minigame-switching system (<code>LevelManager</code> + <code>MinigameBase</code>), so new minigames could be dropped in and swapped dynamically</li>
+            <li>Implemented the shooting mechanics</li>
+            <li>Created the comic-style art and visuals</li>
+            <li>Designed and built the fish minigame</li>
+          </ul>
+        </div>
+
+        <!-- tool/language pills -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;">
+          <span style="background: #E8E3D5; color: #232946; font-size: 0.8rem; padding: 0.35rem 0.8rem; border-radius: 999px;">Godot</span>
+          <span style="background: #E8E3D5; color: #232946; font-size: 0.8rem; padding: 0.35rem 0.8rem; border-radius: 999px;">GDScript</span>
+          <span style="background: #E8E3D5; color: #232946; font-size: 0.8rem; padding: 0.35rem 0.8rem; border-radius: 999px;">Blender</span>
+        </div>
+
+        <!-- photo gallery -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.5rem;">
+          <img src="assets/ninelevelsdown1.png" alt="Nine Levels Down screenshot 1"
+              style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 0.5rem; cursor: pointer;">
+          <img src="assets/ninelevelsdown2.png" alt="Nine Levels Down screenshot 2"
+              style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 0.5rem; cursor: pointer;">
+          <img src="assets/ninelevelsdown3.png" alt="Nine Levels Down screenshot 3"
+              style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 0.5rem; cursor: pointer;">
+        </div>
+
+        <!-- links -->
+        <div style="display: flex; gap: 0.75rem;">
+          <a href="https://amatolio.itch.io/nine-levels-down" target="_blank"
+            style="font-size: 0.85rem; color: #232946; text-decoration: none; background: #F5F1E8;
+                    border: 1px solid #232946; border-radius: 1rem; padding: 0.4rem 0.9rem;">
+            ▶ Play on itch.io
+          </a>
+          <a href="https://github.com/wangQuinn/gmtk_game_jam" target="_blank"
+            style="font-size: 0.85rem; color: #232946; text-decoration: none; background: #F5F1E8;
+                    border: 1px solid #232946; border-radius: 1rem; padding: 0.4rem 0.9rem;">
+            ⌥ View code
+          </a>
+        </div>
+
+      </div>
+    </div>
+    <img src="assets/lamp.png" alt="lamp" class="lamp" />
+
+    <div class="laptop-wrap" id="laptop">
+      <img src="assets/laptop.png" alt="laptop" />
+
+      <div class="file-icon" style="left: 39%; top: 15%; width: 10%;">
+        <div class="icon-inner">
+          <img src="assets/file.png" alt="Project 1" data-modal="project1-modal">
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<div class="calendar" style="position: absolute; left: 5%; top: 70%; width: 18%;
+     aspect-ratio: 600 / 400; z-index: 5;">
+
+  <img src="assets/dateBackground.png" alt=""
+       style="position: absolute; inset: 0; width: 100%; height: 100%;">
+  <img src="assets/dateBackground3.png" alt=""
+       style="position: absolute; inset: 0; width: 100%; height: 100%;">
+  <img src="assets/dateBackground2.png" alt=""
+       style="position: absolute; inset: 0; width: 100%; height: 100%;">
+
+  <span id="cal-month" style="position: absolute; top: 42%; left: 60%;
+      transform: translate(-50%, -50%) rotate(-15deg);
+      font-family: 'Times New Roman', serif; font-weight: bold;
+      font-size: 1.2vw; color: #2a1a10;">APR</span>
+      
+  <span id="cal-day-tens" style="position: absolute; top: 68%; left: 51%;
+        transform: translate(-50%, -50%);
+        font-family: 'Times New Roman', serif; font-weight: bold;
+        font-size: 1.6vw; color: #2a1a10;">2</span>
+
+  <span id="cal-day-ones" style="position: absolute; top: 58%; left: 71%;
+        transform: translate(-50%, -50%);
+        font-family: 'Times New Roman', serif; font-weight: bold;
+        font-size: 1.6vw; color: #2a1a10;">1</span>
+</div>
+
+
+<div class="overlay" data-modal-id="swe-modal">
+  <div class="modal">
+    <button class="modal-close">✕</button>
+
+    <h2 style="margin: 0 0 1.75rem; color: #232946; font-size: 1.75rem;">Software Engineering</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem;">
+          <h3 style="margin: 0; color: #232946; font-size: 1.1rem;">Software Engineer</h3>
+          <span style="font-size: 0.85rem; opacity: 0.55;">Mespere LifeSciences</span>
+        </div>
+        <ul style="margin: 0.5rem 0 0; padding-left: 1.1rem; opacity: 0.85; line-height: 1.6;">
+          <li>Developed a cutting-edge remote checkup platform, now deployed in a newly funded <strong>$2M</strong> clinical research project</li>
+          <li>Built tools in React to visualize live clinical data, focusing on UI for fast and accurate interpretation for doctors</li>
+          <li>Implemented analytics and reporting workflows to support clinical insights and structured summaries</li>
+          <li>Proactively identified areas for product improvement, raising and implementing changes across sprints</li>
+          <li>Used Git for version control and participated in code reviews with senior engineers</li>
+        </ul>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem;">
+          <h3 style="margin: 0; color: #232946; font-size: 1.1rem;">Coding Instructor and Optimization Engineering</h3>
+          <span style="font-size: 0.85rem; opacity: 0.55;">Code Ninjas</span>
+        </div>
+        <ul style="margin: 0.5rem 0 0; padding-left: 1.1rem; opacity: 0.85; line-height: 1.6;">
+          <li>Instructed 100+ students (ages 4–16) in weekly coding lessons using Unity (C#), JavaScript, Roblox Studio (Lua), and web development technologies, guiding students in building interactive games while developing their programming skills, problem-solving, and confidence</li>
+          <li>Developed an AI-powered monthly report generation tool using TypeScript, React, and the Gemini API to automate personalized student progress reports, reducing instructor workload and improving reporting consistency and communication with parents</li>
+          <li>Designed and implemented studio-wide initiatives, including Project of the Week and coding challenges, to increase student engagement and encourage skill development</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+  <div class="overlay" data-modal-id="resume-modal">
+    <div class="modal">
+      <button class="modal-close">✕</button>
+
+      <a href="assets/Elaine_s_Resume.pdf"
+        download
+        style="position: absolute; top: 1rem; right: 4rem; font-size: 0.85rem;
+                color: #232946; text-decoration: none; background: #F5F1E8;
+                border: 1px solid #232946; border-radius: 1rem; padding: 0.4rem 0.9rem;">
+        ⬇ Download
+      </a>
+
+      <iframe
+        src="assets/Elaine_s_Resume.pdf"
+        style="width: 100%; height: 100%; border: none; border-radius: 0.5rem; margin-top: 1rem;">
+      </iframe>
+
+    </div>
+  </div> 
+
+/* LinksPage wrapper */
+<div style="position: absolute; right: 3%; bottom: 20%; width: 15%; z-index: 4;">
+      <img src="assets/LinksPage.png" alt="Links"
+        style="width: 100%; display: block; transform: rotate(90deg); user-select: none;">
+  </div>
+
+<div style="position: absolute; right: 8%; top: 54%; z-index: 5;
+            display: flex; flex-direction: column; gap: 0.6rem;
+            transform: rotate(8deg);
+
+            /* outline: 1px dashed red; */">
+  <a href="https://linkedin.com/in/elaine-zhuu" target="_blank"
+     style="display: flex; align-items: center; gap: 0.4rem;
+            font-family: 'Times New Roman', sans-serif; font-size: 1.25rem;
+            color: #232946; text-decoration: none;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14
+               1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85
+               3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.06
+               2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/>
+    </svg>
+    LinkedIn
+  </a>
+  <a href="https://github.com/zhuelainee" target="_blank"
+     style="display: flex; align-items: center; gap: 0.4rem;
+            font-family: 'Times New Roman', sans-serif; font-size: 1.25rem;
+            color: #232946; text-decoration: none; margin-left: 0.3rem;"
+>
+            
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58
+               0-.29-.01-1.04-.02-2.04-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76
+               -1.09-.75.08-.73.08-.73 1.21.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1
+               .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22
+               -.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55
+               3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22
+               0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.02 2.89-.02 3.29
+               0 .32.22.69.83.58C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+    </svg>
+    GitHub
+  </a>
+
+</div>
+
+  <div class="overlay" data-modal-id="courses-modal">
+    <div class="modal">
+      <button class="modal-close">✕</button>
+
+
+          <h2 style="margin: 0 0 1.75rem; color: #232946; font-size: 1.75rem;">Courses Taken</h2>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Calculus 2 (Eng)</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">MATH119</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Linear Circuits</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">ECE140</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Digital Circuits and Systems</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">ECE124</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Intro Data Abstract and Implementation</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">CS138</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Programming Principles</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">CS137</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Linear Algebra</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">MATH115</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Intro Methods</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">SE101</span>
+            </div>
+            <!-- copy the block above for each course -->
+
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" data-modal-id="project1-modal">
+    <div class="modal">
+      <button class="modal-close">✕</button>
+      <!-- project 1 content goes here -->
+    </div>
+  </div>
+
+  <div class="overlay" data-modal-id="hackathons-modal">
+    <div class="modal">
+      <button class="modal-close">✕</button>
+
+      <h2 style="margin: 0 0 1.75rem; color: #232946; font-size: 1.75rem;">Hackathons</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem;">
+            <h3 style="margin: 0; color: #232946; font-size: 1.1rem;">Hack the North Volunteer Lead <span style="font-size: 0.75rem; font-weight: 400; opacity: 0.55;">(upcoming)</span></h3>
+            <span style="font-size: 0.85rem; opacity: 0.55;">Hack the North</span>
+          </div>
+          <ul style="margin: 0.5rem 0 0; padding-left: 1.1rem; opacity: 0.85; line-height: 1.6;">
+            <li>Serving as Volunteer Food Lead, coordinating fast, organized food delegation for hundreds of attendees</li>
+            <li>Designing volunteer training materials and onboarding for a team of 600+ volunteers</li>
+          </ul>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem;">
+            <h3 style="margin: 0; color: #232946; font-size: 1.1rem;">EngHacks Marketing Co-Lead</h3>
+            <span style="font-size: 0.85rem; opacity: 0.55;">UWaterloo EngSoc</span>
+          </div>
+          <ul style="margin: 0.5rem 0 0; padding-left: 1.1rem; opacity: 0.85; line-height: 1.6;">
+            <li>Created the event's marketing theme and visual direction, driving content that reached 60K+ views</li>
+            <li>Produced photography, Instagram reels, and social posts to promote the event and engage the hacker community</li>
+          </ul>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem;">
+            <h3 style="margin: 0; color: #232946; font-size: 1.1rem;">Waterloo Engineering Competition Marketing Co-Lead</h3>
+            <span style="font-size: 0.85rem; opacity: 0.55;">UWaterloo EngSoc</span>
+          </div>
+          <ul style="margin: 0.5rem 0 0; padding-left: 1.1rem; opacity: 0.85; line-height: 1.6;">
+            <li>Led marketing theme development and content strategy, reaching 50K+ views</li>
+            <li>Captured event photography and produced reels/posts to support the campaign</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+    function openModal(modalId) {
+      const overlay = document.querySelector(`.overlay[data-modal-id="${modalId}"]`);
+      if (overlay) overlay.classList.add('open');
+    }
+
+    function closeModal(overlay) {
+      overlay.classList.remove('open');
+    }
+
+    document.querySelectorAll('.file-icon img[data-modal]').forEach((img) => {
+      const iconWrap = img.closest('.file-icon');
+      iconWrap.setAttribute('tabindex', '0');
+      iconWrap.setAttribute('role', 'button');
+
+      iconWrap.addEventListener('click', () => openModal(img.dataset.modal));
+      iconWrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') openModal(img.dataset.modal);
+      });
+    });
+
+    document.querySelectorAll('.overlay').forEach((overlay) => {
+      overlay.querySelector('.modal-close').addEventListener('click', () => closeModal(overlay));
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal(overlay);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.overlay.open').forEach(closeModal);
+      }
+    });
+    window.addEventListener('load', () => {
+      const viewport = document.querySelector('.viewport');
+      const laptop = document.getElementById('laptop');
+
+      const laptopRect = laptop.getBoundingClientRect();
+      const viewportRect = viewport.getBoundingClientRect();
+
+      const laptopCenterY = laptopRect.top + laptopRect.height / 2 - viewportRect.top + viewport.scrollTop;
+      const laptopCenterX = laptopRect.left + laptopRect.width / 2 - viewportRect.left + viewport.scrollLeft;
+
+      const verticalOffset = 180; // pixels — higher number starts higher up
+      viewport.scrollTop = laptopCenterY - viewport.clientHeight / 2 - verticalOffset;
+      viewport.scrollLeft = laptopCenterX - viewport.clientWidth / 2;
+    });
+
+const today = new Date();
+const monthAbbr = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const dayStr = String(today.getDate()).padStart(2, '0');
+
+document.getElementById('cal-month').textContent = monthAbbr[today.getMonth()];
+document.getElementById('cal-day-tens').textContent = dayStr[0];
+document.getElementById('cal-day-ones').textContent = dayStr[1];  </script>
+
+</body>
+</html>
