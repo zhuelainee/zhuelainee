@@ -451,7 +451,22 @@
           <h2 style="margin: 0 0 1.75rem; color: #232946; font-size: 1.75rem;">Courses Taken</h2>
 
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Data Science Essentials with Python</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">ICTC</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Introduction to Data Science</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">ICTC</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Introduction to Modern AI</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">ICTC</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
+              <span style="opacity: 0.85;">Python Essentials 1</span>
+              <span style="opacity: 0.5; font-size: 0.85rem;">ICTC</span>
+            </div>
             <div style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #ddd8ca;">
               <span style="opacity: 0.85;">Calculus 2 (Eng)</span>
               <span style="opacity: 0.5; font-size: 0.85rem;">MATH119</span>
@@ -600,8 +615,6 @@ function closeModal(overlay) {
   overlay.classList.remove('open');
 }
 
-const CLICKED_KEY = 'portfolio-clicked-icons';
-const clickedIds = new Set(JSON.parse(localStorage.getItem(CLICKED_KEY) || '[]'));
 
 document.querySelectorAll('.file-icon img[data-modal]').forEach((img) => {
   const iconWrap = img.closest('.file-icon');
@@ -611,14 +624,10 @@ document.querySelectorAll('.file-icon img[data-modal]').forEach((img) => {
   iconWrap.setAttribute('role', 'button');
 
   // glow until this specific icon has been clicked before
-  if (!clickedIds.has(modalId)) {
-    iconWrap.classList.add('unclicked');
-  }
+  iconWrap.classList.add('unclicked');
 
   function markClicked() {
     iconWrap.classList.remove('unclicked');
-    clickedIds.add(modalId);
-    localStorage.setItem(CLICKED_KEY, JSON.stringify([...clickedIds]));
     openModal(modalId);
   }
 
