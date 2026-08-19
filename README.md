@@ -1,4 +1,4 @@
-## Hello!
+## Hello! Check out my personal website [here](https://zhuelainee.github.io/zhuelainee/)
 
 <!--
 **zhuelainee/zhuelainee** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
