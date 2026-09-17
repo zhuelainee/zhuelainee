@@ -18,54 +18,56 @@
     overscroll-behavior: none;
 
   }
-.viewport {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: auto;      /* clips whatever spills past the edges */
-  background: #000;
-}
+  .viewport {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;      /* clips whatever spills past the edges */
+    background: #000;
+  }
 
-.calendar {
-  position: absolute;
-  left: 5%;
-  bottom: 28%;      /* was: top: 70% — now anchored to the desk like the lamp */
-  width: min(25vw, 450px);
-  aspect-ratio: 600 / 400;
-  
-  z-index: 5;
-}
+  .calendar {
+    position: absolute;
+    left: 5%;
+    bottom: 28%;      /* was: top: 70% — now anchored to the desk like the lamp */
+    width: min(25cqw, 450px);
+    aspect-ratio: 600 / 400;
+    
+    z-index: 5;
+  }
 
-.block {
-  position: relative;
-  flex: 1;
-}
+  .block {
+    position: relative;
+    flex: 1;
+  }
 
-.block img {
-  width: 100%;
-  display: block;
-}
+  .block img {
+    width: 100%;
+    display: block;
+  }
 
-.block span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Times New Roman', serif;
-  font-weight: bold;
-  font-size: 1.4vw;
-  color: #3a2a1a; /* dark "painted" brown/black */
-}
+  .block span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Times New Roman', serif;
+    font-weight: bold;
+    font-size: 1.4cqw;
+    color: #3a2a1a; /* dark "painted" brown/black */
+  }
 
-.scene {
-  position: relative;      /* was: absolute */
-  margin: 0 auto;           /* was: top/left/transform centering */
-  width: max(100vw, calc(100vh * 2388 / 1668));
-  height: max(100vh, calc(100vw * 1668 / 2388));
-  background-image: url('assets/room.png');
-  background-size: cover;
-  background-position: center;
-}
+  .scene {
+    position: relative;      /* was: absolute */
+    margin: 0 auto;           /* was: top/left/transform centering */
+    width: max(100vw, calc(100vh * 2388 / 1668));
+    height: max(100vh, calc(100vw * 1668 / 2388));
+    background-image: url('assets/room.png');
+    background-size: cover;
+    background-position: center;
+    container-type: inline-size;  /* lets children size off .scene's width via cqw, not the raw viewport */
+    container-name: scene;
+  }
   .scene::after {
     content: "";
     position: absolute;
@@ -78,7 +80,7 @@
     position: absolute;
     bottom: 28%;
     left: 25%;
-    width: min(25vw, 450px);
+    width: min(25cqw, 450px);
     z-index: 2;
     pointer-events: none;
   }
@@ -88,7 +90,7 @@
     bottom: 13%;
     left: 47%;
     transform: translateX(-50%) rotate(-2deg);
-    width: min(40vw, 600px);
+    width: min(40cqw, 600px);
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     filter: drop-shadow(0 25px 25px rgba(0,0,0,0.25));
     z-index: 3;
@@ -123,8 +125,6 @@
     pointer-events: none;
   }
 
-  /* .file-icon { outline: 1px dashed red; } */
-
   .click-hint {
     position: absolute;
     bottom: 8%;
@@ -153,17 +153,17 @@
   }
 
   @keyframes glow-pulse {
-  0%, 100% { filter: drop-shadow(0 0 2px rgba(32, 40, 127, 0.3)); }
-  50%      { filter: drop-shadow(0 0 14px rgba(251, 201, 72, 0.9)); }
-}
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(32, 40, 127, 0.3)); }
+    50%      { filter: drop-shadow(0 0 14px rgba(251, 201, 72, 0.9)); }
+  }
 
-.file-icon.unclicked .icon-inner {
-  animation: float 3s ease-in-out infinite, glow-pulse 1.8s ease-in-out infinite;
-}
+  .file-icon.unclicked .icon-inner {
+    animation: float 3s ease-in-out infinite, glow-pulse 1.8s ease-in-out infinite;
+  }
 
-.file-icon:hover .icon-inner {
-  transform: scale(1.15) !important;
-}
+  .file-icon:hover .icon-inner {
+    transform: scale(1.15) !important;
+  }
 
   .overlay {
     position: fixed;
@@ -218,7 +218,6 @@
 </head>
 <body>
   <div class="viewport">
-
   <div class="scene">
 
     <div class="file-icon" style="left: 35%; top: 20%; width: 10%;">
@@ -312,10 +311,9 @@
         </div>
       </div>
     </div>
-  </div>
 
 
-<div class="calendar" style="position: absolute; left: 5%; top: 70%; width: 18%;
+<div class="calendar" style="position: absolute; left: 7%; top: 55%; width: 18%;
      aspect-ratio: 600 / 400; z-index: 5;">
 
   <img src="assets/dateBackground.png" alt=""
@@ -328,17 +326,17 @@
   <span id="cal-month" style="position: absolute; top: 42%; left: 60%;
       transform: translate(-50%, -50%) rotate(-15deg);
       font-family: 'Times New Roman', serif; font-weight: bold;
-      font-size: 1.2vw; color: #2a1a10;">APR</span>
+      font-size: 1.2cqw; color: #2a1a10;">APR</span>
       
   <span id="cal-day-tens" style="position: absolute; top: 68%; left: 51%;
         transform: translate(-50%, -50%);
         font-family: 'Times New Roman', serif; font-weight: bold;
-        font-size: 1.6vw; color: #2a1a10;">2</span>
+        font-size: 1.6cqw; color: #2a1a10;">2</span>
 
   <span id="cal-day-ones" style="position: absolute; top: 58%; left: 71%;
         transform: translate(-50%, -50%);
         font-family: 'Times New Roman', serif; font-weight: bold;
-        font-size: 1.6vw; color: #2a1a10;">1</span>
+        font-size: 1.6cqw; color: #2a1a10;">1</span>
 </div>
 
 
@@ -399,22 +397,21 @@
     </div>
   </div> 
 
-/* LinksPage wrapper */
-<div style="position: absolute; right: 3%; bottom: 28%; width: 15%; z-index: 4;">
+<div style="position: absolute; right: 3%; bottom: 44%; width: 15%; z-index: 4;">
       <img src="assets/LinksPage.png" alt="Links"
         style="width: 100%; display: block; transform: rotate(90deg); user-select: none;">
   </div>
 
-<div style="position: absolute; right: 8%; top: 54%; z-index: 5;
-            display: flex; flex-direction: column; gap: 0.6rem;
+<div style="position: absolute; right: 7.5%; bottom: 50%; z-index: 5;
+            display: flex; flex-direction: column; gap: 0.8cqw;
             transform: rotate(8deg);
 
             /* outline: 1px dashed red; */">
   <a href="https://linkedin.com/in/elaine-zhuu" target="_blank"
-     style="display: flex; align-items: center; gap: 0.4rem;
-            font-family: 'Times New Roman', sans-serif; font-size: 1.25rem;
+     style="display: flex; align-items: center; gap: 0.4em;
+            font-family: 'Times New Roman', sans-serif; font-size: 1.2cqw;
             color: #232946; text-decoration: none;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink: 0;">
       <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14
                1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85
                3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.06
@@ -423,12 +420,12 @@
     LinkedIn
   </a>
   <a href="https://github.com/zhuelainee" target="_blank"
-     style="display: flex; align-items: center; gap: 0.4rem;
-            font-family: 'Times New Roman', sans-serif; font-size: 1.25rem;
-            color: #232946; text-decoration: none; margin-left: 0.3rem;"
+     style="display: flex; align-items: center; gap: 0.4em;
+            font-family: 'Times New Roman', sans-serif; font-size: 1.2cqw;
+            color: #232946; text-decoration: none; margin-left: 0.3em;"
 >
             
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink: 0;">
       <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58
                0-.29-.01-1.04-.02-2.04-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76
                -1.09-.75.08-.73.08-.73 1.21.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1
@@ -442,6 +439,7 @@
   </a>
 
 </div>
+  </div>
 
   <div class="overlay" data-modal-id="courses-modal">
     <div class="modal">
@@ -583,7 +581,7 @@
         document.querySelectorAll('.overlay.open').forEach(closeModal);
       }
     });
-    window.addEventListener('load', () => {
+    function centerOnLaptop() {
       const viewport = document.querySelector('.viewport');
       const laptop = document.getElementById('laptop');
 
@@ -596,6 +594,14 @@
       const verticalOffset = 180; // pixels — higher number starts higher up
       viewport.scrollTop = laptopCenterY - viewport.clientHeight / 2 - verticalOffset;
       viewport.scrollLeft = laptopCenterX - viewport.clientWidth / 2;
+    }
+
+    window.addEventListener('load', centerOnLaptop);
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(centerOnLaptop, 150); // debounced so it doesn't fire on every pixel
     });
 
 const today = new Date();
